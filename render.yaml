@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: citizen-vk-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python vk_bot.py
+    envVars:
+      - key: VK_GROUP_TOKEN
+        sync: false
+      - key: VK_GROUP_ID
+        sync: false
+      - key: VK_NOTIFY_PEER_ID
+        sync: false
+      - key: CITIZEN_API_URL
+        sync: false
+      - key: WEBHOOK_PORT
+        value: "10000"
