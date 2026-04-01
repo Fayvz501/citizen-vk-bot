@@ -1,33 +1,4 @@
 """
-═══════════════════════════════════════════════════════════
-  Citizen Monitor — VK Bot Integration
-═══════════════════════════════════════════════════════════
-
-  Бот для ВКонтакте, интегрированный с Citizen Monitor.
-  Отправляет уведомления о происшествиях в беседу/группу VK,
-  принимает команды от пользователей.
-
-  ── Настройка ──
-  1. Создайте сообщество VK (или используйте существующее)
-  2. Настройки → Работа с API → Создать ключ
-     Права: сообщения сообщества, управление
-  3. Настройки → Работа с API → Long Poll API → Включить
-     Версия API: 5.199
-     Типы событий: Входящие сообщения
-  4. Настройки → Сообщения → Включить сообщения сообщества
-  5. Заполните .env файл (см. ниже)
-
-  ── .env ──
-  VK_GROUP_TOKEN=vk1.a.xxxxxxx...
-  VK_GROUP_ID=123456789
-  VK_NOTIFY_PEER_ID=2000000001
-  VK_ADMIN_IDS=123456,789012
-  CITIZEN_API_URL=http://localhost:3000/api
-
-  ── Запуск ──
-  pip install vk-api requests python-dotenv
-  python vk_bot.py
-
   ── Команды ──
   /help           — список команд
   /live           — активные происшествия
@@ -38,7 +9,6 @@
   /unsubscribe    — отписка
   /safety         — безопасность района
   (цифра)         — подробности о событии
-═══════════════════════════════════════════════════════════
 """
 
 import os
@@ -57,11 +27,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-VK_GROUP_TOKEN = os.getenv("VK_GROUP_TOKEN", "")
-VK_GROUP_ID = int(os.getenv("VK_GROUP_ID", "0"))
+VK_GROUP_TOKEN = os.getenv("VK_GROUP_TOKEN", "vk1.a.TP4eFnbt8hOc3cUtd7xxZkOTG9ZVXsc31hCHP3dmggBGx0jB9qijT3HpeJTjR41N0ixA46VCT4plqYepwE_Ii4CoTHDX-Dn_gKdXVN4QbWhUF3V0W52AUami0Dj_vRMPjQeKMwAiK13rsl_r64BTaQZo_SglC0VV9NZHPUaklSCxi6OEips1SIZyh2zAbzFNBxSqqOOLqJT4yD07cWwHOw")
+VK_GROUP_ID = int(os.getenv("VK_GROUP_ID", "237015576"))
 VK_NOTIFY_PEER_ID = os.getenv("VK_NOTIFY_PEER_ID", "")
 VK_ADMIN_IDS = [int(x) for x in os.getenv("VK_ADMIN_IDS", "").split(",") if x.strip()]
-CITIZEN_API_URL = os.getenv("CITIZEN_API_URL", "http://localhost:3000/api")
+CITIZEN_API_URL = os.getenv("CITIZEN_API_URL", "https://citizen-monitor-v3.onrender.com/api")
 POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "10"))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", datefmt="%H:%M:%S")
@@ -167,7 +137,7 @@ def fmt_incident(inc):
         f"⚡ {t['emoji']} {t['label']}",
         "",
         f"📝 {inc.get('description', '—')}",
-        f"📍 {inc.get('address') or f'{inc[\"lat\"]:.5f}, {inc[\"lng\"]:.5f}'}",
+        f"📍 {inc.get('address') or '{:.5f}, {:.5f}'.format(inc.get('lat', 0), inc.get('lng', 0))}",
         "",
         f"👤 {inc.get('username', 'Аноним')} · ⭐{inc.get('reputation', 0)}",
         f"✅ {inc.get('confirms', 0)} · ❌ {inc.get('fakes', 0)} · 💬 {inc.get('comment_count', 0)}",
@@ -317,12 +287,12 @@ def handle(api, event):
     if txt in ("/start", "/help", "начать", "помощь", "❓ помощь"):
         send(api, pid, "\n".join([
             "⚡ CITIZEN MONITOR", "",
-            "🔴 Происшествия — события за 24ч",
-            "📊 Статистика — за 7 дней",
-            "🏆 Топ — лидерборд",
-            "🛡 Безопасность — рейтинг района",
-            "🗺 Карта — веб-приложение",
-            "🔔 Подписка — уведомления",
+            "🔴 Происшествия - события за 24ч",
+            "📊 Статистика - за 7 дней",
+            "🏆 Топ - лидерборд",
+            "🛡 Безопасность - рейтинг района",
+            "🗺 Карта - веб-приложение",
+            "🔔 Подписка - уведомления",
             "", "Введите номер события для подробностей"
         ]), main_kb())
 
